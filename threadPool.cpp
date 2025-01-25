@@ -13,10 +13,10 @@ private:
   std::queue<std::function<void()>> tasks;
   std::vector<std::thread> threads;
   std::condition_variable cv;
-  std::mutex mtx;
-
+  std::mutex task_mtx;
+  std::mutex cout_mtx;
 public:
-  threadPool(int num);
+  threadPool(size_t num);
   template <typename F, typename... Arg> void emplace(F &&f, Arg &&...arg);
   ~threadPool();
 };
@@ -26,16 +26,16 @@ void threadPool::emplace(F &&f, Arg &&...arg) {
   std::function<void()> task =
       std::bind(std::forward<F>(f), std::forward<Arg>(arg)...);
   {
-    std::unique_lock lock(mtx);
-    tasks.emplace(task);
+    std::unique_lock task_lk(task_mtx);
+    tasks.emplace(std::move(task));
   }
 
   cv.notify_one();
 }
 
-threadPool::threadPool(int num) {
+threadPool::threadPool(size_t num) {
   {
-    std::unique_lock lk(mtx);
+    std::unique_lock lk(task_mtx);
     stop = false;
   }
   for (size_t i = 0; i < num; i++) {
@@ -43,8 +43,8 @@ threadPool::threadPool(int num) {
       std::function<void()> task;
       while (true) {
         {
-          std::unique_lock lk(mtx);
-          cv.wait(lk, [this]() { return !tasks.empty() || stop; });
+          std::unique_lock task_lk(task_mtx);
+          cv.wait(task_lk, [this]() { return !tasks.empty() || stop; });
 
           if (stop && tasks.empty()) {
             return;
@@ -53,7 +53,7 @@ threadPool::threadPool(int num) {
           task = std::move(tasks.front());
           tasks.pop();
         } // lk作用区
-
+        std::unique_lock cout_lk(cout_mtx);
         task();
       }
     });
@@ -62,7 +62,7 @@ threadPool::threadPool(int num) {
 
 threadPool::~threadPool() {
   {
-    std::unique_lock lk(mtx);
+    std::unique_lock task_lk(task_mtx);
     stop = true;
   }
   cv.notify_all();
