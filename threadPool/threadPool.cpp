@@ -1,25 +1,4 @@
-#include <condition_variable>
-#include <functional>
-#include <iostream>
-#include <mutex>
-#include <queue>
-#include <string>
-#include <thread>
-#include <vector>
-
-class threadPool {
-private:
-  bool stop;
-  std::queue<std::function<void()>> tasks;
-  std::vector<std::thread> threads;
-  std::condition_variable cv;
-  std::mutex task_mtx;
-  std::mutex cout_mtx;
-public:
-  threadPool(size_t num);
-  template <typename F, typename... Arg> void emplace(F &&f, Arg &&...arg);
-  ~threadPool();
-};
+#include "threadPool.h"
 
 template <typename F, typename... Arg>
 void threadPool::emplace(F &&f, Arg &&...arg) {
@@ -73,13 +52,3 @@ threadPool::~threadPool() {
   }
 }
 
-int main() {
-  threadPool tp(4);
-  for (size_t i = 0; i < 10; i++) {
-    std::cout << "task " << i << "in" << std::endl;
-    tp.emplace(
-        [](int num) { std::cout << "task " << num << "out" << std::endl; }, i);
-  }
-
-  return 0;
-}
