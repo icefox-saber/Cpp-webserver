@@ -43,12 +43,9 @@ std::string tcpClient::getServerAddr_string() {
   return std::string(inet_ntoa(getServerAddr_int()));
 }
 
-char *tcpClient::getBuffer()
-{
-    return buffer;
-}
+char *tcpClient::getBuffer() { return buffer; }
 
 tcpClient::~tcpClient() {
   close();
-  delete [] buffer;
+  delete[] buffer;
 }

@@ -1,5 +1,4 @@
 #include <arpa/inet.h>
-#include <cstring>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -22,7 +21,6 @@ public:
   std::string getServerAddr_string();
   int recv(size_t max_len);
   int close();
-  char* getBuffer();
+  char *getBuffer();
   ~tcpClient();
 };
-

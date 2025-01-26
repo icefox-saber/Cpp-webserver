@@ -15,6 +15,7 @@ private:
   std::condition_variable cv;
   std::mutex task_mtx;
   std::mutex cout_mtx;
+
 public:
   threadPool(size_t num);
   template <typename F, typename... Arg> void emplace(F &&f, Arg &&...arg);

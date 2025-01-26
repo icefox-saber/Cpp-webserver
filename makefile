@@ -9,7 +9,7 @@ BIN_DIR = bin
 SRCS = clientTest.cpp Client/tcpClient.cpp
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(DEP_DIR)/%.d)
-TARGETS = $(BIN_DIR)/clientTest 
+TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest 
 
 all: $(TARGETS)
 
@@ -25,6 +25,19 @@ $(OBJ_DIR)/tcpClient.o: Client/tcpClient.cpp | $(OBJ_DIR) $(DEP_DIR)
 $(OBJ_DIR)/clientTest.o: clientTest.cpp | $(OBJ_DIR) $(DEP_DIR)
 	$(CXX) $(CFLAGS) -MMD -MP -c clientTest.cpp -o $(OBJ_DIR)/clientTest.o
 	mv $(OBJ_DIR)/clientTest.d $(DEP_DIR)/
+
+# 自动生成 target 规则
+$(BIN_DIR)/serverTest : $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o -o $(BIN_DIR)/serverTest $(LDFLAGS)
+
+# 编译 .o 文件并生成依赖文件
+$(OBJ_DIR)/tcpServer.o: Server/tcpServer.cpp | $(OBJ_DIR) $(DEP_DIR)
+	$(CXX) $(CFLAGS) -MMD -MP -c Server/tcpServer.cpp -o $(OBJ_DIR)/tcpServer.o
+	mv $(OBJ_DIR)/tcpServer.d $(DEP_DIR)/
+
+$(OBJ_DIR)/serverTest.o: serverTest.cpp | $(OBJ_DIR) $(DEP_DIR)
+	$(CXX) $(CFLAGS) -MMD -MP -c serverTest.cpp -o $(OBJ_DIR)/serverTest.o
+	mv $(OBJ_DIR)/serverTest.d $(DEP_DIR)/
 
 # 自动创建目录
 $(OBJ_DIR) $(DEP_DIR) $(BIN_DIR):
