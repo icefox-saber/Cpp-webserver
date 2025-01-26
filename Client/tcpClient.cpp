@@ -50,5 +50,5 @@ char *tcpClient::getBuffer()
 
 tcpClient::~tcpClient() {
   close();
-  delete buffer;
+  delete [] buffer;
 }
