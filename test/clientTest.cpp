@@ -1,4 +1,4 @@
-#include "Client/tcpClient.h"
+#include "../include/tcpClient.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>

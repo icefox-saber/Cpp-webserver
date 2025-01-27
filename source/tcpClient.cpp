@@ -1,4 +1,4 @@
-#include "tcpClient.h"
+#include "../include/tcpClient.h"
 
 #define BUFFER_SIZE 1024
 

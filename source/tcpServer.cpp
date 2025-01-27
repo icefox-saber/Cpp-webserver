@@ -1,4 +1,4 @@
-#include "tcpServer.h"
+#include "../include/tcpServer.h"
 
 #define BUFFER_SIZE 1024
 
