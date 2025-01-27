@@ -6,4 +6,4 @@ test
 dep/
 obj/
 bin/
-*Test.cpp
+*.mp4
