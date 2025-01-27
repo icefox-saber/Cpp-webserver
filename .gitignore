@@ -4,3 +4,4 @@ obj/
 bin/
 *.mp4
 .vscode/
+*.out
