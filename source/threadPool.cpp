@@ -1,7 +1,5 @@
 #include "../include/threadPool.h"
 
-
-
 threadPool::threadPool(size_t num) {
   {
     std::unique_lock lk(task_mtx);

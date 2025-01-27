@@ -9,8 +9,8 @@ int tcpServer::initialize(uint16_t PORT) {
   server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   port = PORT;
   server_addr.sin_port = htons(port);
-  int opt =1 ;
-  setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+  int opt = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
   int fd =
       bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
   return fd; //<0 means fail
@@ -39,8 +39,7 @@ int tcpServer::recv(int client_socket, size_t max_len) {
   return ::recv(client_socket, buffer, max_len, 0);
 }
 
-int tcpServer::recv(int client_socket, size_t max_len , void *buf)
-{
+int tcpServer::recv(int client_socket, size_t max_len, void *buf) {
   return ::recv(client_socket, buf, max_len, 0);
 }
 

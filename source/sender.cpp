@@ -1,10 +1,8 @@
 #include "../include/sender.h"
 
-
-
 sender::sender(size_t thread_num) : threads(thread_num){};
 
-int sender::initialize(uint16_t PORT ,size_t listen_num ) {
+int sender::initialize(uint16_t PORT, size_t listen_num) {
   if (tcpServer::initialize(PORT) == -1) {
     return -1;
   }

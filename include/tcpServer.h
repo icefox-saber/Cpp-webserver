@@ -24,7 +24,7 @@ public:
   in_addr getServerAddr_int();
   std::string getServerAddr_string();
   int recv(int client_socket, size_t max_len);
-  int recv(int client_socket, size_t max_len , void *buffer);
+  int recv(int client_socket, size_t max_len, void *buffer);
   int close_server();
   int close_client(int client_socket);
   char *getBuffer();
