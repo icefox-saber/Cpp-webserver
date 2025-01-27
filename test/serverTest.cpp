@@ -14,7 +14,7 @@ void sent_file(tcpServer &server, int client_socket, std::string video) {
   int bytes_read = 0;
   while (ret != -1 && source.read(buffer, 2048)) {
     bytes_read = source.gcount();
-    ret = server.send(client_socket, buffer, bytes_read);
+    ret = server.send(client_socket, (void *)buffer, bytes_read);
   }
   source.close();
   server.close_client(client_socket);

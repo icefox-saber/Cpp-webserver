@@ -26,7 +26,7 @@ int tcpServer::send(int client_socket, const std::string &msg, size_t num) {
   return send(client_socket, msg.c_str(), num);
 }
 
-int tcpServer::send(int client_socket, const char *msg, size_t num) {
+int tcpServer::send(int client_socket, const void *msg, size_t num) {
   return ::send(client_socket, msg, num, 0);
 }
 
@@ -35,6 +35,11 @@ int tcpServer::recv(int client_socket, size_t max_len) {
     max_len = BUFFER_SIZE;
   }
   return ::recv(client_socket, buffer, max_len, 0);
+}
+
+int tcpServer::recv(int client_socket, size_t max_len , void *buf)
+{
+  return ::recv(client_socket, buf, max_len, 0);
 }
 
 int tcpServer::getSocket() { return server_socket; }

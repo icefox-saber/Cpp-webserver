@@ -1,16 +1,6 @@
 #include "../include/threadPool.h"
 
-template <typename F, typename... Arg>
-void threadPool::emplace(F &&f, Arg &&...arg) {
-  std::function<void()> task =
-      std::bind(std::forward<F>(f), std::forward<Arg>(arg)...);
-  {
-    std::unique_lock task_lk(task_mtx);
-    tasks.emplace(std::move(task));
-  }
 
-  cv.notify_one();
-}
 
 threadPool::threadPool(size_t num) {
   {

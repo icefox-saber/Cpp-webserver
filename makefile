@@ -11,7 +11,7 @@ TEST_DIR = test
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(DEP_DIR)/%.d)
-TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest 
+TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest  $(BIN_DIR)/senderTest
 
 all: $(TARGETS)
 
@@ -24,6 +24,10 @@ $(BIN_DIR)/clientTest : $(OBJ_DIR)/clientTest.o $(OBJ_DIR)/tcpClient.o | $(BIN_D
 $(BIN_DIR)/serverTest : $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o | $(BIN_DIR)
 	$(CXX) $(CFLAGS) $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o -o $(BIN_DIR)/serverTest $(LDFLAGS)
 
+#senderTest
+$(BIN_DIR)/senderTest : $(OBJ_DIR)/senderTest.o $(OBJ_DIR)/sender.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/senderTest.o $(OBJ_DIR)/sender.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o -o $(BIN_DIR)/senderTest $(LDFLAGS)
+
 # 编译 .o 文件并生成依赖文件
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(DEP_DIR)
 	$(CXX) $(CFLAGS) -MMD -MP -c $< -o $@
@@ -32,7 +36,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(DEP_DIR)
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_DIR) $(DEP_DIR)
 	$(CXX) $(CFLAGS) -MMD -MP -c $< -o $@
 	mv $(@:.o=.d) $(DEP_DIR)/
-	
+
 
 # 自动创建目录
 $(OBJ_DIR) $(DEP_DIR) $(BIN_DIR):

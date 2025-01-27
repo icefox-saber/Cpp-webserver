@@ -25,7 +25,7 @@ int tcpClient::send(const std::string &msg, size_t num) {
   return send(msg.c_str(), num);
 }
 
-int tcpClient::send(const char *msg, size_t num) {
+int tcpClient::send(void *msg, size_t num) {
   return ::send(client_socket, msg, num, 0);
 }
 

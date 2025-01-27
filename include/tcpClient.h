@@ -1,3 +1,6 @@
+#ifndef TCPCLIENT_H
+#define TCPCLIENT_H
+
 #include <arpa/inet.h>
 #include <iostream>
 #include <string>
@@ -15,7 +18,7 @@ public:
   int connect(const std::string &ip, const uint16_t &port);
   int connect(const char *ip, const uint16_t &port);
   int send(const std::string &msg, size_t n);
-  int send(const char *msg, size_t n);
+  int send(void *msg, size_t n);
   int getSocket();
   in_addr getServerAddr_int();
   std::string getServerAddr_string();
@@ -24,3 +27,5 @@ public:
   char *getBuffer();
   ~tcpClient();
 };
+
+#endif
