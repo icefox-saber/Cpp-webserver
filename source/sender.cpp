@@ -2,13 +2,13 @@
 
 
 
-sender::sender(size_t num) : threads(num){};
+sender::sender(size_t thread_num) : threads(thread_num){};
 
-int sender::initialize(uint16_t PORT) {
+int sender::initialize(uint16_t PORT ,size_t listen_num ) {
   if (tcpServer::initialize(PORT) == -1) {
     return -1;
   }
-  if (tcpServer::listen(5) == -1) {
+  if (tcpServer::listen(listen_num) == -1) {
     return -1;
   }
 

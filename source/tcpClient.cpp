@@ -37,10 +37,12 @@ int tcpClient::recv(size_t max_len) {
 }
 
 int tcpClient::getSocket() { return client_socket; }
-in_addr tcpClient::getServerAddr_int() { return server_addr.sin_addr; }
+in_addr_t tcpClient::getServerAddr_int() { return server_addr.sin_addr.s_addr; }
 
 std::string tcpClient::getServerAddr_string() {
-  return std::string(inet_ntoa(getServerAddr_int()));
+  in_addr addr;
+  addr.s_addr = getServerAddr_int();
+  return std::string(inet_ntoa(addr));
 }
 
 char *tcpClient::getBuffer() { return buffer; }
