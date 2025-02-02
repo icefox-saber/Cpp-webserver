@@ -41,7 +41,7 @@ public:
   /// @param msg 消息
   /// @param n 消息大小
   /// @return 已发送的消息字节数，或者-1
-  int send(void *msg, size_t n);
+  int send(const void *msg, size_t n);
   /// @brief 获取客户端socket
   /// @return 客户端socket
   int getSocket();
