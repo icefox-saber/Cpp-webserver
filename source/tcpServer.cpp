@@ -2,7 +2,7 @@
 
 #define BUFFER_SIZE 1024
 
-tcpServer::tcpServer() { buffer = new char[BUFFER_SIZE]; }
+tcpServer::tcpServer() {}
 int tcpServer::initialize(uint16_t PORT) {
   server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   server_addr.sin_family = AF_INET;
@@ -10,7 +10,10 @@ int tcpServer::initialize(uint16_t PORT) {
   port = PORT;
   server_addr.sin_port = htons(port);
   int opt = 1;
-  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt,
+             sizeof(opt)); // 端口复用（覆盖）
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+  setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
   int fd =
       bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
   return fd; //<0 means fail
@@ -32,14 +35,7 @@ int tcpServer::send(int client_socket, const void *msg, size_t num) {
   return ::send(client_socket, msg, num, 0);
 }
 
-int tcpServer::recv(int client_socket, size_t max_len) {
-  if (max_len > BUFFER_SIZE) {
-    max_len = BUFFER_SIZE;
-  }
-  return ::recv(client_socket, buffer, max_len, 0);
-}
-
-int tcpServer::recv(int client_socket, size_t max_len, void *buf) {
+int tcpServer::recv(int client_socket, void *buf, size_t max_len) {
   return ::recv(client_socket, buf, max_len, 0);
 }
 
@@ -50,14 +46,10 @@ std::string tcpServer::getServerAddr_string() {
   return std::string(inet_ntoa(getServerAddr_int()));
 }
 
-char *tcpServer::getBuffer() { return buffer; }
 int tcpServer::close_client(int client_socket) {
   return ::close(client_socket);
 };
 
 int tcpServer::close_server() { return ::close(server_socket); };
 
-tcpServer::~tcpServer() {
-  close_server();
-  delete[] buffer;
-}
+tcpServer::~tcpServer() { close_server(); }

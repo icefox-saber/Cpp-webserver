@@ -17,7 +17,7 @@ private:
   std::vector<std::thread> threads;
   std::condition_variable cv;
   std::mutex task_mtx;
-  std::mutex cout_mtx;
+  // std::mutex cout_mtx;调试用
 
 public:
   threadPool(size_t num = 1);

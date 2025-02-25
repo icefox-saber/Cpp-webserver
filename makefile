@@ -11,11 +11,23 @@ TEST_DIR = test
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(DEP_DIR)/%.d)
-TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest  $(BIN_DIR)/senderTest
+TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest  $(BIN_DIR)/senderTest $(BIN_DIR)/epolltest $(BIN_DIR)/downloaderTest
+
 
 all: $(TARGETS)
 
 # 自动生成 target 规则
+
+# downloaderTest
+
+$(BIN_DIR)/downloaderTest : $(OBJ_DIR)/downloaderTest.o $(OBJ_DIR)/tcpClient.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/downloaderTest.o $(OBJ_DIR)/tcpClient.o -o $(BIN_DIR)/downloaderTest $(LDFLAGS)
+
+# epolltest
+
+$(BIN_DIR)/epolltest : $(OBJ_DIR)/epolltest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/epoll.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/epolltest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/epoll.o -o $(BIN_DIR)/epolltest $(LDFLAGS)
+
 # clientTest
 $(BIN_DIR)/clientTest : $(OBJ_DIR)/clientTest.o $(OBJ_DIR)/tcpClient.o | $(BIN_DIR)
 	$(CXX) $(CFLAGS) $(OBJ_DIR)/clientTest.o $(OBJ_DIR)/tcpClient.o -o $(BIN_DIR)/clientTest $(LDFLAGS)

@@ -25,7 +25,7 @@ void sender::handle_client(int client_socket) {
     char filename[256];
     size_t size;
   } file;
-  tcpServer::recv(client_socket, sizeof(file), (char *)&file);
+  tcpServer::recv(client_socket, (char *)&file, sizeof(file));
   std::string sourceFile = file.filename;
   // size_t file_size = file.size;
   std::ifstream source(sourceFile, std::ios::binary);

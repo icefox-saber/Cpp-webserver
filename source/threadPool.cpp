@@ -20,7 +20,7 @@ threadPool::threadPool(size_t num) {
           task = std::move(tasks.front());
           tasks.pop();
         } // lk作用区
-        std::unique_lock cout_lk(cout_mtx);
+        // std::unique_lock cout_lk(cout_mtx);调试用
         task();
       }
     });
