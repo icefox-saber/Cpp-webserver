@@ -1,4 +1,4 @@
-#include "./include/tcpClient.h"
+#include "../include/tcpClient.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -22,8 +22,10 @@ int main(int argc, char *argv[]) {
     std::string str;
     cin >> str;
     client.send(str, str.size());
-    client.recv(2000);
-    std::cout << client.getBuffer();
+    int i = client.recv(2000);
+
+    std::cout.write(client.getBuffer(), i);
+    std::cout.flush();
   }
 
   return 0;

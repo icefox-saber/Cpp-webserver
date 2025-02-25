@@ -64,9 +64,8 @@ int main(int argc, char *argv[]) {
                 std::memset(buffer, 0, sizeof(buffer));
                 int num = server.recv(epoller.getFd(i), buffer, sizeof(buffer));
                 if (num > 0) {
-                  server.send(epoller.getEvent(i), buffer, num);
+                  server.send(epoller.getFd(i), buffer, num);
                   std::cout << "buffer: " << buffer << endl;
-                  num = server.recv(epoller.getFd(i), buffer, sizeof(buffer));
                   continue;
                 } else if (num == -1 && errno == EINTR) { // 环境中断
                   continue;
