@@ -37,8 +37,8 @@ $(BIN_DIR)/serverTest : $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o | $(BIN_D
 	$(CXX) $(CFLAGS) $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o -o $(BIN_DIR)/serverTest $(LDFLAGS)
 
 #senderTest
-$(BIN_DIR)/senderTest : $(OBJ_DIR)/senderTest.o $(OBJ_DIR)/sender.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o | $(BIN_DIR)
-	$(CXX) $(CFLAGS) $(OBJ_DIR)/senderTest.o $(OBJ_DIR)/sender.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o -o $(BIN_DIR)/senderTest $(LDFLAGS)
+$(BIN_DIR)/senderTest : $(OBJ_DIR)/sender.o $(OBJ_DIR)/senderTest.o  $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/sender.o $(OBJ_DIR)/senderTest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o -o $(BIN_DIR)/senderTest $(LDFLAGS)
 
 # 编译 .o 文件并生成依赖文件
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(DEP_DIR)

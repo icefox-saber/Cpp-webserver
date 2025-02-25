@@ -31,10 +31,13 @@ void sender::handle_client(int client_socket) {
   std::ifstream source(sourceFile, std::ios::binary);
   char buffer[2048];
   int ret = 0;
-  int bytes_read = 0;
-  while (ret != -1 && source.read(buffer, 2048)) {
-    bytes_read = source.gcount();
+  source.read(buffer, 2048);
+
+  int bytes_read = source.gcount();
+  while (ret != -1 && bytes_read) {
     ret = tcpServer::send(client_socket, buffer, bytes_read);
+    source.read(buffer, 2048);
+    bytes_read = source.gcount();
   }
   source.close();
   tcpServer::close_client(client_socket);
