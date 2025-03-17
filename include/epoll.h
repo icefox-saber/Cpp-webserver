@@ -11,6 +11,7 @@ private:
 
 public:
   Epoll(size_t maxevents = 16, int timeout = -1);
+  Epoll(const Epoll &) = delete;
   bool add_fd(int fd, uint32_t events);
   bool mod_fd(int fd, uint32_t events);
   bool del_fd(int fd, uint32_t events);

@@ -1,3 +1,6 @@
+#ifndef BUFFER_H
+#define BUFFER_H
+
 #include <sys/types.h>
 #include <vector>
 
@@ -69,3 +72,5 @@ public:
   void clear();
   ~buffer();
 };
+
+#endif

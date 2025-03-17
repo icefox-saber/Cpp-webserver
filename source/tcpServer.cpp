@@ -12,8 +12,10 @@ int tcpServer::initialize(uint16_t PORT) {
   int opt = 1;
   setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt,
              sizeof(opt)); // 端口复用（覆盖）
-  setsockopt(server_socket, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-  setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEPORT, &opt,
+             sizeof(opt)); //多线程复用同一端口，负载均衡
+  setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &opt,
+             sizeof(opt)); //小报文立即发送，低延迟场景
   int fd =
       bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
   return fd; //<0 means fail

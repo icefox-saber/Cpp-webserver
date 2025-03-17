@@ -11,16 +11,18 @@ TEST_DIR = test
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(DEP_DIR)/%.d)
-TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/serverTest  $(BIN_DIR)/senderTest $(BIN_DIR)/epollTest $(BIN_DIR)/downloaderTest \
-	$(BIN_DIR)/epollclient
+TARGETS = $(BIN_DIR)/clientTest $(BIN_DIR)/tcpServerTest $(BIN_DIR)/senderTest $(BIN_DIR)/epollTest $(BIN_DIR)/downloaderTest \
+	$(BIN_DIR)/epollclient $(BIN_DIR)/serverTest
 
 
 all: $(TARGETS)
 
 # 自动生成 target 规则
 
-# epollclient
+$(BIN_DIR)/serverTest :$(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/server.o $(OBJ_DIR)/buffer.o $(OBJ_DIR)/epoll.o $(OBJ_DIR)/log.o $(OBJ_DIR)/threadPool.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS)  $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/server.o $(OBJ_DIR)/buffer.o $(OBJ_DIR)/epoll.o $(OBJ_DIR)/log.o $(OBJ_DIR)/threadPool.o -o $(BIN_DIR)/serverTest $(LDFLAGS)
 
+# epollclient
 $(BIN_DIR)/epollclient: $(OBJ_DIR)/tcpClient.o $(OBJ_DIR)/epollclient.o | $(BIN_DIR)
 	$(CXX) $(CFLAGS) $(OBJ_DIR)/tcpClient.o $(OBJ_DIR)/epollclient.o -o $(BIN_DIR)/epollclient $(LDFLAGS)
 
@@ -36,9 +38,9 @@ $(BIN_DIR)/epollTest : $(OBJ_DIR)/epollTest.o $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/
 $(BIN_DIR)/clientTest : $(OBJ_DIR)/clientTest.o $(OBJ_DIR)/tcpClient.o | $(BIN_DIR)
 	$(CXX) $(CFLAGS) $(OBJ_DIR)/clientTest.o $(OBJ_DIR)/tcpClient.o -o $(BIN_DIR)/clientTest $(LDFLAGS)
 
-#serverTest
-$(BIN_DIR)/serverTest : $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o | $(BIN_DIR)
-	$(CXX) $(CFLAGS) $(OBJ_DIR)/serverTest.o $(OBJ_DIR)/tcpServer.o -o $(BIN_DIR)/serverTest $(LDFLAGS)
+#tcpServerTest
+$(BIN_DIR)/tcpServerTest : $(OBJ_DIR)/tcpServerTest.o $(OBJ_DIR)/tcpServer.o | $(BIN_DIR)
+	$(CXX) $(CFLAGS) $(OBJ_DIR)/tcpServerTest.o $(OBJ_DIR)/tcpServer.o -o $(BIN_DIR)/tcpServerTest $(LDFLAGS)
 
 #senderTest
 $(BIN_DIR)/senderTest : $(OBJ_DIR)/sender.o $(OBJ_DIR)/senderTest.o  $(OBJ_DIR)/tcpServer.o $(OBJ_DIR)/threadPool.o | $(BIN_DIR)
