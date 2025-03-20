@@ -95,7 +95,7 @@ void server::dealWrite(int fd) {
 }
 
 void server::handleclient(int fd) {
-  while (connEvent_ & EPOLLET) {
+  do {
     char buffer[1024];
     int len = tcpServer_.recv(fd, buffer, 1024);
     logger::instance()->log("recv " + std::to_string(len) + " bytes from fd " +
@@ -106,7 +106,7 @@ void server::handleclient(int fd) {
       logger::instance()->log("all msg from fd recv");
       break;
     }
-  }
+  } while (connEvent_ & EPOLLET);
   epoller_.mod_fd(fd, connEvent_);
 }
 void server::SetFdNonblock(int fd) {
