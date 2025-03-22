@@ -5,8 +5,8 @@ server::server(int trigmod, uint16_t PORT, size_t threadsnum, int timeouts,
     : epoller_(maxevent, timeouts), threadPoller_(threadsnum), tcpServer_(),
       triggerMod_(trigmod) {
   // 初始化监听套接字
-  logger::instance()->log("tcpServer initialize" +
-                          std::to_string(tcpServer_.initialize(PORT)));
+  logger::instance().log("tcpServer initialize" +
+                         std::to_string(tcpServer_.initialize(PORT)));
   tcpServer_.listen(listennum);
   listensock_ = tcpServer_.getSocket();
   // Set listensock_ to non-blocking mode
@@ -37,33 +37,33 @@ server::server(int trigmod, uint16_t PORT, size_t threadsnum, int timeouts,
 void server::run() {
   while (true) {
     int infds = epoller_.wait();
-    // logger::instance()->log("epoll wait " + std::to_string(infds) + "event");
+    // logger::instance().log("epoll wait " + std::to_string(infds) + "event");
     if (infds < 0) {
-      logger::instance()->log("epoll_wait fial");
+      logger::instance().log("epoll_wait fial");
     } // 错误
 
     else if (infds == 0) {
-      // logger::instance()->log("epoll wait time out");
+      // logger::instance().log("epoll wait time out");
     } // 超时
     else {
       for (int i = 0; i < infds; i++) {
-        logger::instance()->log("epoll" + std::to_string(i) + "event");
+        logger::instance().log("epoll" + std::to_string(i) + "event");
         int sock = epoller_.getFd(i);
         auto event = epoller_.getEvent(i);
         if (sock == listensock_) {
-          logger::instance()->log("listen event");
+          logger::instance().log("listen event");
           dealListen();
         } else if (event & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
-          logger::instance()->log("close event");
+          logger::instance().log("close event");
           dealClose(sock);
         } else if (event & EPOLLIN) {
-          logger::instance()->log("read event");
+          logger::instance().log("read event");
           dealRead(sock);
         } else if (event & EPOLLOUT) {
-          logger::instance()->log("write event");
+          logger::instance().log("write event");
           dealWrite(sock);
         } else {
-          logger::instance()->log("unexpected error in server::run");
+          logger::instance().log("unexpected error in server::run");
         }
       }
     }
@@ -74,12 +74,12 @@ void server::dealListen() {
   while (listenEvent_ & EPOLLET) {
     int fd = tcpServer_.accept();
     if (fd < 0) {
-      logger::instance()->log("accept all listen fd");
+      logger::instance().log("accept all listen fd");
       break;
     }
     SetFdNonblock(fd);
     epoller_.add_fd(fd, connEvent_);
-    logger::instance()->log("accept a fd " + std::to_string(fd));
+    logger::instance().log("accept a fd " + std::to_string(fd));
   }
 }
 
@@ -91,19 +91,19 @@ void server::dealRead(int fd) {
   threadPoller_.emplace(&server::handleclient, this, fd);
 }
 void server::dealWrite(int fd) {
-  logger::instance()->log("no write handler but write event happen");
+  logger::instance().log("no write handler but write event happen");
 }
 
 void server::handleclient(int fd) {
   do {
     char buffer[1024];
     int len = tcpServer_.recv(fd, buffer, 1024);
-    logger::instance()->log("recv " + std::to_string(len) + " bytes from fd " +
-                            std::to_string(fd));
+    logger::instance().log("recv " + std::to_string(len) + " bytes from fd " +
+                           std::to_string(fd));
     if (len > 0) {
       tcpServer_.send(fd, buffer, len);
     } else {
-      logger::instance()->log("all msg from fd recv");
+      logger::instance().log("all msg from fd recv");
       break;
     }
   } while (connEvent_ & EPOLLET);

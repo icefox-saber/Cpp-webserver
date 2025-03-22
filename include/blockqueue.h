@@ -1,3 +1,6 @@
+#ifndef BLOCK_QUEUE_H
+#define BLOCK_QUEUE_H
+
 #include <condition_variable>
 #include <deque>
 #include <mutex>
@@ -5,17 +8,21 @@
 
 template <typename T> class blockqueue {
 private:
+  std::size_t capacity_;
   std::condition_variable productor_;
   std::condition_variable consumer_;
   std::mutex mtx_;
   std::deque<T> deque_;
-  std::size_t capacity_;
 
 public:
+  blockqueue(std::size_t capacity);
   void push_back(T &&msg);
   void push_front(T &&msg);
   void pop_front(T &dest);
+  ~blockqueue(){};
 };
+template <typename T>
+blockqueue<T>::blockqueue(std::size_t capacity) : capacity_(capacity) {}
 
 template <typename T> void blockqueue<T>::push_back(T &&msg) {
   {
@@ -44,3 +51,4 @@ template <typename T> void blockqueue<T>::pop_front(T &msg) {
   }
   productor_.notify_one();
 }
+#endif

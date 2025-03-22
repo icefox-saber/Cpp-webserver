@@ -1,26 +1,22 @@
 #include "../include/log.h"
 
-std::ofstream logger::logger_;
-std::mutex logger::mtx_;
-std::once_flag logger::once;
-std::unique_ptr<logger> logger::inst;
+logger::logger(std::string file_)
+    : blockqueue_(10), logger_(file_, std::ios::app),
+      writethread_(&logger::write, this) {}
 
-logger::logger(std::string file_) { logger_.open(file_, std::ios::app); }
-
-logger *logger::instance() {
-  std::call_once(once, []() { inst.reset(new logger()); });
-
-  return inst.get();
+logger &logger::instance() {
+  static logger inst_;
+  return inst_;
 }
 
-logger::~logger() {
-  std::unique_lock lck(mtx_);
-  if (logger_.is_open()) {
-    logger_.close();
+logger::~logger() {}
+
+void logger::log(std::string str) { blockqueue_.push_back(std::move(str)); }
+
+void logger::write() {
+  std::string msg;
+  while (true) {
+    blockqueue_.pop_front(msg);
+    logger_ << msg << std::endl;
   }
-}
-
-void logger::log(std::string str) {
-  std::unique_lock lck(mtx_);
-  logger_ << str << std::endl;
 }
