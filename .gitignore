@@ -7,3 +7,4 @@ bin/
 *.out
 log
 test1.cpp
+.Log/

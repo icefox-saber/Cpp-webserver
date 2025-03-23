@@ -7,10 +7,14 @@
 #include <string>
 #include <thread>
 #include <utility>
+#include <chrono>
 
+/// @brief 单例的日志，用C++文件流实现
 class logger {
 private:
-  logger(std::string file_ = "./log");
+  /// @brief 
+  /// @param file_ 
+  logger(const std::string &filename = "./.Log/");
   logger(const logger &) = delete;
   logger(logger &&) = delete;
   logger &operator=(const logger &) = delete;
@@ -23,9 +27,11 @@ public:
   void log(std::string str);
 
 private:
+  const std::string filenameSuffix_;
   blockqueue<std::string> blockqueue_;
-  std::ofstream logger_;
-  static std::once_flag once_;
-
   std::thread writethread_;
+  std::ofstream logger_;
+
 };
+
+bool updateday(std::tm *localtime_);
