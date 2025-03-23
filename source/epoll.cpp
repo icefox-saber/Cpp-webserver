@@ -52,7 +52,7 @@ int Epoll::getFd(int index) {
   assert(index >= 0 && index < static_cast<int>(events.size()));
   return events[index].data.fd;
 }
-int Epoll::getEvent(int index) {
+uint32_t Epoll::getEvent(int index) {
   assert(index >= 0 && index < static_cast<int>(events.size()));
 
   return events[index].events;
