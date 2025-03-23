@@ -6,20 +6,35 @@
 #include <mutex>
 #include <queue>
 
+/// @brief 线程安全的生产者消费者队列
+/// @tparam T 队列中存储的数据类型
 template <typename T> class blockqueue {
 private:
+  /// @brief 块队列的最大长度
   std::size_t capacity_;
+  /// @brief 生产者条件变量
   std::condition_variable productor_;
+  /// @brief 消费者条件变量
   std::condition_variable consumer_;
+  /// @brief 互斥锁
   std::mutex mtx_;
+  /// @brief 数据队列
   std::deque<T> deque_;
 
 public:
+  /// @brief 初始化队列
+  /// @param capacity 队列允许的最大储存长度
   blockqueue(std::size_t capacity);
+  /// @brief 添加元素到队列末
+  /// @param msg 添加到队列的元素
   void push_back(T &&msg);
+  /// @brief 添加元素到队列首
+  /// @param msg 添加到队列的元素
   void push_front(T &&msg);
+  /// @brief 从队列首取出一个元素，取完该元素会消失
+  /// @param dest 存储取出元素的变量
   void pop_front(T &dest);
-  ~blockqueue(){};
+  ~blockqueue() {};
 };
 template <typename T>
 blockqueue<T>::blockqueue(std::size_t capacity) : capacity_(capacity) {}
