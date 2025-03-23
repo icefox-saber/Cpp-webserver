@@ -1,4 +1,5 @@
 #include "../include/log.h"
+#include <iostream>
 
 logger::logger(const std::string &file_)
     : filenameSuffix_(file_), blockqueue_(10),
@@ -32,8 +33,10 @@ void logger::write() {
   std::strftime(dateBuffer, sizeof(dateBuffer), "%Y.%m.%d", localtime_);
   std::string date(dateBuffer);
   logger_.open(filenameSuffix_ + date, std::ios::app);
+  int mday = localtime_->tm_mday;
   while (true) {
-    if (updateday(localtime_)) {
+    if (updateday(mday)) {
+      mday = localtime_->tm_mday;
       std::strftime(dateBuffer, sizeof(dateBuffer), "%Y.%m.%d", localtime_);
       date = dateBuffer;
       logger_.close();
@@ -44,13 +47,8 @@ void logger::write() {
   }
 }
 
-bool updateday(std::tm *localtime_) {
+bool updateday(int mday) {
   auto now_ = std::chrono::system_clock::now();
   std::time_t time_ = std::chrono::system_clock::to_time_t(now_);
-  if (std::localtime(&time_)->tm_mday != localtime_->tm_mday) {
-    localtime_ = std::localtime(&time_);
-    return true;
-  }
-
-  return false;
+  return std::localtime(&time_)->tm_mday != mday;
 }

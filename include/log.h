@@ -34,4 +34,4 @@ private:
 
 };
 
-bool updateday(std::tm *localtime_);
+bool updateday(int mday);
