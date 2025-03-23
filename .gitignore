@@ -6,3 +6,4 @@ bin/
 .vscode/
 *.out
 log
+test1.cpp
