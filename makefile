@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -std=c++2a -g -Wall -fsanitize=address -fsanitize=leak
+CFLAGS = -std=c++2a -g -Wall
 LDFLAGS = -fsanitize=address -fsanitize=leak
 OBJ_DIR = obj
 DEP_DIR = dep
