@@ -12,12 +12,19 @@
 
 class server {
 private:
+  /// @brief 管理Epoll的对象
   Epoll epoller_;
+  /// @brief 线程池
   threadPool threadPoller_;
+  /// @brief 封装tcp协议的对象
   tcpServer tcpServer_;
+  /// @brief 触发模式
   int triggerMod_;
+  /// @brief 监听套接字
   int listensock_;
+  /// @brief 监听套接字的相应事件类型
   uint32_t listenEvent_;
+  /// @brief 连接套接字的相应事件类型
   uint32_t connEvent_;
 
 public:
@@ -29,14 +36,28 @@ public:
   server(int trigmod = 0, uint16_t PORT = 8080, size_t threadsnum = 2,
          int timeouts = -1, int maxevent = 8, int listennum = 1);
 
-  void dealListen();
-  void dealClose(int fd);
-  void dealRead(int fd);
-  void dealWrite(int fd);
-  void handleclient(int fd);
-  void SetFdNonblock(int fd);
+  /// @brief 服务器运行
   void run();
   ~server();
+
+private:
+  /// @brief 处理监听事件
+  void dealListen();
+  /// @brief 处理客户端断开事件
+  /// @param fd 客户端连接的FD
+  void dealClose(int fd);
+  /// @brief 处理读事件
+  /// @param fd 客户端连接的FD
+  void dealRead(int fd);
+  /// @brief 处理写事件
+  /// @param fd 客户端连接的FD
+  void dealWrite(int fd);
+  /// @brief 处理客户端的函数
+  /// @param fd 客户端的fd
+  void handleclient(int fd);
+  /// @brief 设置FD为非阻塞
+  /// @param fd 要设置的FD
+  void SetFdNonblock(int fd);
 };
 
 #endif
