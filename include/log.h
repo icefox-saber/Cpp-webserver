@@ -1,3 +1,6 @@
+#ifndef LOG_H
+#define LOG_H
+
 #include "blockqueue.h"
 #include "buffer.h"
 #include <chrono>
@@ -46,3 +49,5 @@ private:
 /// @param mday 旧的天 
 /// @return ture表示日期更新了，false表示没变
 bool updateday(int mday);
+
+#endif

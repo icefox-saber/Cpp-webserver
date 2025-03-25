@@ -1,3 +1,6 @@
+#ifndef EPOLL_H
+#define EPOLL_H
+
 #include <cassert>
 #include <memory>
 #include <sys/epoll.h>
@@ -52,3 +55,5 @@ public:
   uint32_t getEvent(int index);
   ~Epoll();
 };
+
+#endif
