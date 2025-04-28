@@ -72,41 +72,36 @@ void server::run() {
 
 void server::dealListen() {
   while (listenEvent_ & EPOLLET) {
-    int fd = tcpServer_.accept();
+    sockaddr_in client_addr{};
+    int fd = tcpServer_.accept(client_addr);
     if (fd < 0) {
-      logger::instance().log("accept all listen fd");
+      log("accept all listen fd");
       break;
     }
     SetFdNonblock(fd);
     epoller_.add_fd(fd, connEvent_);
-    logger::instance().log("accept a fd " + std::to_string(fd));
+    httpConnPool_[fd].reset(fd, client_addr);
+    char client_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+    std::string_view str(client_ip, INET_ADDRSTRLEN);
+    //log("accept a fd:{} from {}", fd, str);
   }
 }
 
 void server::dealClose(int fd) {
   epoller_.del_fd(fd, connEvent_);
-  tcpServer_.close_client(fd);
+  httpConnPool_[fd].clear();
 }
 void server::dealRead(int fd) {
   threadPoller_.emplace(&server::handleclient, this, fd);
 }
 void server::dealWrite(int fd) {
-  logger::instance().log("no write handler but write event happen");
+  log("no write handler but write event happen");
 }
 
 void server::handleclient(int fd) {
-  do {
-    char buffer[1024];
-    int len = tcpServer_.recv(fd, buffer, 1024);
-    logger::instance().log("recv " + std::to_string(len) + " bytes from fd " +
-                           std::to_string(fd));
-    if (len > 0) {
-      tcpServer_.send(fd, buffer, len);
-    } else {
-      logger::instance().log("all msg from fd recv");
-      break;
-    }
-  } while (connEvent_ & EPOLLET);
+  httpConnPool_[fd].process();
+  // 处理完后重新注册事件
   epoller_.mod_fd(fd, connEvent_);
 }
 void server::SetFdNonblock(int fd) {

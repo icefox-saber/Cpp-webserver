@@ -3,11 +3,12 @@
 
 #include "epoll.h"
 #include "log.h"
-#include "tcpServer.h"
+#include "httpConn.h"
+#include "tcpListener.h"
 #include "threadPool.h"
 #include <fcntl.h>
 #include <iostream>
-// #include <format>
+#include <unordered_map>
 
 class server {
 private:
@@ -25,7 +26,8 @@ private:
   uint32_t listenEvent_;
   /// @brief 连接套接字的相应事件类型
   uint32_t connEvent_;
-
+  /// @brief 连接池
+  std::unordered_map<int,httpconn> httpConnPool_;
 public:
   /// @brief 服务器初始化
   /// @param trigmod

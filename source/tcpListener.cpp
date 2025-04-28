@@ -23,15 +23,14 @@ int tcpServer::initialize(uint16_t PORT) {
 
 int tcpServer::listen(int num) { return ::listen(server_socket, num); }
 
-int tcpServer::accept() {
-  sockaddr_in client_addr{};
+int tcpServer::accept(sockaddr_in & client_addr) {
   socklen_t client_len = sizeof(client_addr);
   int fd =
       ::accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
   char client_ip[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
   std::string client_ip_string(client_ip);
-  logger::instance().log("get connect ip:{} fd:{}", client_ip_string, fd);
+  //logger::instance().log("get connect ip:{} fd:{}", client_ip_string, fd);
   return fd;
 };
 

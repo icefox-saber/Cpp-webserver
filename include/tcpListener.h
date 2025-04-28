@@ -30,7 +30,7 @@ public:
   int listen(int num = 1);
   /// @brief 接受一个TCP连接
   /// @return 连接套接字文件描述符
-  int accept();
+  int accept(sockaddr_in & addr);
   
   int getSocket();
   /// @brief 返回服务器地址
