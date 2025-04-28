@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <vector>
+#include <string_view>
 
 class buffer {
   // private:
@@ -31,13 +32,6 @@ class buffer {
   /// @return 可移动的空闲缓冲区长度
   std::size_t PrependableBytes() const;
 
-  /// @brief 获取读操作的起始迭代器的位置
-  /// @return 读操作的起始迭代器的位置
-  std::vector<char>::const_iterator readposIterator() const;
-
-  /// @brief 获取写操作的起始迭代器的位置
-  /// @return 读操作的起始迭代器的位置
-  std::vector<char>::iterator writeposIterator();
 
 public:
   /// @brief 初始化缓冲区大小为len
@@ -48,14 +42,17 @@ public:
   /// @param buffer 数据起始地址
   /// @param len 数据长度
   /// @return 实际添加的数据数
-  std::size_t append(const char *buffer, std::size_t len);
+  std::size_t append(std::string_view str);
 
-  /// @brief 从缓冲区中获取数据，数据读完就没了
-  /// @param buffer 数据存入的地方
-  /// @param len 希望读取数据的长度，
-  /// @return 实际读取的数据长度
-  std::size_t get(char *buffer, std::size_t len);
+  std::vector<char>::iterator begin();
+  std::vector<char>::const_iterator begin() const;
 
+  std::vector<char>::iterator end();
+  std::vector<char>::const_iterator end() const;
+
+  /// @brief 缓冲区去除len个数据
+  /// @param len 
+  void hasread(size_t len);
   /// @brief 从文件描述符中读完
   /// @param fd 需要读取的文件描述符
   /// @param error 错误状态的指针

@@ -22,7 +22,7 @@ void buffer::make_space(std::size_t len) {
   if (PrependableBytes() + writableBytes() < len) {
     buffer_.resize(writepos_ + len);
   } else {
-    std::copy(buffer_.begin() + readpos_, writeposIterator(), buffer_.begin());
+    std::copy(buffer_.begin() + readpos_, end(), buffer_.begin());
     writepos_ -= readpos_;
     readpos_ = 0;
   }
@@ -32,28 +32,32 @@ std::size_t buffer::readableBytes() const { return writepos_ - readpos_; }
 std::size_t buffer::writableBytes() const { return buffer_.size() - writepos_; }
 std::size_t buffer::PrependableBytes() const { return readpos_; }
 
-std::vector<char>::const_iterator buffer::readposIterator() const {
+std::vector<char>::const_iterator buffer::begin() const {
   return buffer_.begin() + readpos_;
 }
 
-std::vector<char>::iterator buffer::writeposIterator() {
+std::vector<char>::iterator buffer::begin() {
+  return buffer_.begin() + readpos_;
+}
+
+std::vector<char>::iterator buffer::end() {
+  return buffer_.begin() + writepos_;
+}
+std::vector<char>::const_iterator buffer::end() const {
   return buffer_.begin() + writepos_;
 }
 
-std::size_t buffer::append(const char *buffer, std::size_t len) {
-  make_sure_writable(len);
-  std::copy(buffer, buffer + len, writeposIterator());
-  writepos_ += len;
-
-  return len;
+void buffer::hasread(size_t len) {
+  assert(len <= readableBytes());
+  readpos_ += len;
 }
 
-std::size_t buffer::get(char *buffer, std::size_t len) {
-  len = std::min(len, readableBytes());
-  auto readBegin = readposIterator();
-  std::copy(readBegin, readBegin + len, buffer);
-  readpos_ += len;
-  return len;
+std::size_t buffer::append(std::string_view str) {
+  make_sure_writable(str.size());
+  std::copy(str.begin(), str.end(), end());
+  writepos_ += str.size();
+
+  return str.size();
 }
 
 ssize_t buffer::readFromFD(int fd, int *errorptr) {
@@ -61,7 +65,7 @@ ssize_t buffer::readFromFD(int fd, int *errorptr) {
 
   iovec iov[2];
   const size_t writenum = writableBytes();
-  iov[0].iov_base = writeposIterator().base();
+  iov[0].iov_base = end().base();
   iov[0].iov_len = writenum;
   iov[1].iov_base = exbuff;
   iov[1].iov_len = sizeof exbuff;
@@ -74,16 +78,16 @@ ssize_t buffer::readFromFD(int fd, int *errorptr) {
     const size_t stlen = static_cast<size_t>(len);
     writepos_ += std::min(stlen, writenum);
     if (stlen > writenum) {
-      append(exbuff, stlen - writenum);
+      std::string_view str(exbuff, stlen - writenum);
+      append(str);
     }
   }
-
   return len;
 }
 
 ssize_t buffer::writeToFD(int fd, int *errorptr) {
 
-  const ssize_t len = write(fd, readposIterator().base(), readableBytes());
+  const ssize_t len = write(fd, begin().base(), readableBytes());
   if (len < 0) {
     *errorptr = errno;
   } else {

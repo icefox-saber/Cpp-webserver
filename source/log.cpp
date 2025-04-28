@@ -12,7 +12,8 @@ logger &logger::instance() {
 
 logger::~logger() {}
 
-void logger::log(std::string str) {
+void logger::log(std::string_view str_) {
+  std::string str(str_);
   auto now_ = std::chrono::system_clock::now();
   std::time_t time_ = std::chrono::system_clock::to_time_t(now_);
   std::tm *localtime_ =
@@ -35,6 +36,7 @@ void logger::write() {
   logger_.open(filenameSuffix_ + date, std::ios::app);
   int mday = localtime_->tm_mday;
   while (true) {
+    //std::cout<<"logger thread is running" << std::endl;
     if (updateday(mday)) {
       mday = localtime_->tm_mday;
       std::strftime(dateBuffer, sizeof(dateBuffer), "%Y.%m.%d", localtime_);
@@ -43,6 +45,7 @@ void logger::write() {
       logger_.open(filenameSuffix_ + date, std::ios::app);
     }
     blockqueue_.pop_front(msg);
+    //std::cout<<msg<< std::endl;
     logger_ << msg << std::endl;
   }
 }

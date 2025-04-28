@@ -2,16 +2,15 @@
 #define LOG_H
 
 #include "blockqueue.h"
-#include "buffer.h"
 #include <chrono>
 #include <condition_variable>
+#include <format>
 #include <fstream>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <utility>
-#include <format>
 
 /// @brief 单例的日志，用C++文件流实现
 class logger {
@@ -33,10 +32,10 @@ public:
   static logger &instance();
   /// @brief 写入日志
   /// @param str 写入日志的内容
-  void log(std::string str);
+  void log(std::string_view str);
   template <typename... _Args>
-  [[nodiscard]]
-  void log(const std::string &__fmt, _Args &&...__args);
+  void log(std::string_view __fmt, _Args &&...__args);
+
 private:
   /// @brief 日志文件路径的前缀
   const std::string filenameSuffix_;
@@ -48,15 +47,27 @@ private:
   std::ofstream logger_;
 };
 
+/// @brief 
+/// @tparam ..._Args 
+/// @param __fmt 
+/// @param ...__args 
 template <typename... _Args>
-void logger::log(const std::string &__fmt, _Args &&...__args)
-{
-  return log(std::format(__fmt, std::forward<Args>(args)...));
+void logger::log(std::string_view __fmt,_Args &&...__args) {
+  return log(std::vformat(__fmt, std::make_format_args(__args)...));
 }
 
 /// @brief 更新日期的函数
 /// @param mday 旧的天
 /// @return ture表示日期更新了，false表示没变
 bool updateday(int mday);
+
+/// @brief 
+/// @tparam ..._Args 
+/// @param __fmt 
+/// @param ...__args 
+template <typename... _Args>
+void log(std::string_view __fmt, _Args &&...__args) {
+  return logger::instance().log(__fmt, std::forward<_Args>(__args)...);
+}
 
 #endif
