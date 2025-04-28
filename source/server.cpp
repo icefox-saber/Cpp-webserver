@@ -14,8 +14,7 @@ server::server(int trigmod, uint16_t PORT, size_t threadsnum, int timeouts,
 
   // 设置触发模式
   listenEvent_ = EPOLLIN;
-  connEvent_ = EPOLLONESHOT | EPOLLRDHUP |
-               EPOLLIN; // 确保事件只被处理一次，避免多线程环境下的竞争
+  connEvent_ = EPOLLONESHOT | EPOLLRDHUP | EPOLLIN | EPOLLOUT; // 确保事件只被处理一次，避免多线程环境下的竞争，并在客户端缓冲区由满变为不满时触发
   switch (triggerMod_) {
   case 0:
     break;
@@ -37,9 +36,11 @@ server::server(int trigmod, uint16_t PORT, size_t threadsnum, int timeouts,
 void server::run() {
   while (true) {
     int infds = epoller_.wait();
-    // logger::instance().log("epoll wait " + std::to_string(infds) + "event");
+    static const std::string EPOWAIT_fmt = "epoll wait {} event";
+    log(EPOWAIT_fmt , infds);
     if (infds < 0) {
-      logger::instance().log("epoll_wait fial");
+      static const std::string EPOWAIT_Fail_fmt = "epoll_wait fial";
+      log(EPOWAIT_Fail_fmt);
     } // 错误
 
     else if (infds == 0) {
@@ -47,7 +48,8 @@ void server::run() {
     } // 超时
     else {
       for (int i = 0; i < infds; i++) {
-        logger::instance().log("epoll" + std::to_string(i) + "event");
+        static const std::string EPOWAIT_event_fmt = "epoll{} event";
+        log(EPOWAIT_event_fmt, i);
         int sock = epoller_.getFd(i);
         auto event = epoller_.getEvent(i);
         if (sock == listensock_) {
@@ -78,7 +80,7 @@ void server::dealListen() {
       log("accept all listen fd");
       break;
     }
-    //SetFdNonblock(fd);
+    SetFdNonblock(fd);
     epoller_.add_fd(fd, connEvent_);
     httpConnPool_[fd].reset(fd, client_addr);
     char client_ip[INET_ADDRSTRLEN];
@@ -96,7 +98,8 @@ void server::dealRead(int fd) {
   threadPoller_.emplace(&server::handleclient, this, fd);
 }
 void server::dealWrite(int fd) {
-  log("no write handler but write event happen");
+  httpConnPool_[fd].dealwrite();
+  epoller_.mod_fd(fd, connEvent_);
 }
 
 void server::handleclient(int fd) {
