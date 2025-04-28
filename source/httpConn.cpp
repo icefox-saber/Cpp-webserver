@@ -57,5 +57,8 @@ void httpconn::clear() {
     return;
   }
   
+  httpconn::httpconn() : FD_(-1),client_addr_(0) {
+  }
+
   httpconn::~httpconn() {}
   

@@ -28,7 +28,7 @@ private:
 private:
 public:
   void clear();
-  httpconn() = default;
+  httpconn();
   httpconn(int fd, sockaddr_in client_addr);
   void reset(int fd, sockaddr_in client_addr);
   void process();

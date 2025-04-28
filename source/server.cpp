@@ -78,7 +78,7 @@ void server::dealListen() {
       log("accept all listen fd");
       break;
     }
-    SetFdNonblock(fd);
+    //SetFdNonblock(fd);
     epoller_.add_fd(fd, connEvent_);
     httpConnPool_[fd].reset(fd, client_addr);
     char client_ip[INET_ADDRSTRLEN];
