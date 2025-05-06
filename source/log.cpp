@@ -36,7 +36,6 @@ void logger::write() {
   logger_.open(filenameSuffix_ + date, std::ios::app);
   int mday = localtime_->tm_mday;
   while (true) {
-    //std::cout<<"logger thread is running" << std::endl;
     if (updateday(mday)) {
       mday = localtime_->tm_mday;
       std::strftime(dateBuffer, sizeof(dateBuffer), "%Y.%m.%d", localtime_);
@@ -45,7 +44,6 @@ void logger::write() {
       logger_.open(filenameSuffix_ + date, std::ios::app);
     }
     blockqueue_.pop_front(msg);
-    //std::cout<<msg<< std::endl;
     logger_ << msg << std::endl;
   }
 }

@@ -53,7 +53,7 @@ private:
 /// @param ...__args 
 template <typename... _Args>
 void logger::log(std::string_view __fmt,_Args &&...__args) {
-  return log(std::vformat(__fmt, std::make_format_args(__args)...));
+  return log(std::vformat(__fmt, std::make_format_args(__args...)));
 }
 
 /// @brief 更新日期的函数

@@ -59,6 +59,8 @@ private:
   /// @brief 设置FD为非阻塞
   /// @param fd 要设置的FD
   void SetFdNonblock(int fd);
+
+  void handlewrite(int fd);
 };
 
 #endif

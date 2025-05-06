@@ -94,6 +94,10 @@ ssize_t buffer::writeToFD(int fd, int *errorptr) {
     readpos_ += len;
   }
 
+  if(readableBytes() > 0){
+    *errorptr = true;
+  }
+
   return len;
 }
 

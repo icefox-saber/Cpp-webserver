@@ -29,7 +29,7 @@ private:
 public:
   void clear();
   httpconn();
-  void dealwrite();
+  void dealwrite(int *saveErrno);
   httpconn(int fd, sockaddr_in client_addr);
   void reset(int fd, sockaddr_in client_addr);
   void process();

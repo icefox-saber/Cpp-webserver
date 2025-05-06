@@ -30,7 +30,7 @@ int tcpServer::accept(sockaddr_in & client_addr) {
   char client_ip[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
   std::string client_ip_string(client_ip);
-  //logger::instance().log("get connect ip:{} fd:{}", client_ip_string, fd);
+  log("get connect ip:{} fd:{}", client_ip_string, fd);
   return fd;
 };
 
