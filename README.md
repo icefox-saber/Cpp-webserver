@@ -1,6 +1,6 @@
-# epoll 并发tcp服务器
+# C++ http服务器
 
-- epoll IO多路复用 + 非阻塞 + 对象池 + 线程池并发 + TCP协议 + http1.1协议
+- epoll IO多路复用 + 非阻塞 + 线程池并发 + reactor模型 + http1.1协议
 - 单例日志系统+ C++20 format实现格式化输入
 - 支持选择边缘触发和水平触发
 - vector\<char\>自动增长的缓冲区 + string\_view实现高效流操作
